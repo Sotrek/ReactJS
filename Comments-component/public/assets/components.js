@@ -1,5 +1,13 @@
 class Comment extends React.Component {
   render() {
+
+let commentBody;
+    if (this.state.isAbusive == false){
+      commentBody = this.props.body;
+    } else {
+      commentBody = <em>Content marked as abusive</em>;
+    }
+
     return(
       <div className="comment">
         <img className="comment" src={this.props.avatarUrl} alt={`${this.props.author}'s picture`}/>
@@ -7,7 +15,7 @@ class Comment extends React.Component {
           {this.props.author}
         </p>
         <p className="comment-body">
-          {this.props.body}
+          {commentBody}
         </p>
         <div className="comment-actions">
           <a href="#">Delete comment</a>
@@ -18,18 +26,36 @@ class Comment extends React.Component {
 }
 
 class CommentBox extends React.Component {
+  constructor(){
+    super();
+
+    this.state = {
+      showComments: false,
+      isAbusive: false
+    };
+  }
   render() {
     const comments = this._getComment() || [];
+    let commentNodes;
+    if( this.state.showComments ){
+      commentNodes = <div className="comment-list">{comments}</div>
+    }
     return(
       <div className="comment-box">
         <h3>Comments</h3>
          {this._getPopularMessage(comments.length)}
         <h4 className="comment-count">{this._getCommentsTitle(comments.length)}</h4>
-        <div className="comment-list">
-            {comments}
-        </div>
+        <button onClick={this._handleClick.bind(this)}>Show Comments</button>
+        {commentNodes}
+        {console.log(commentNodes)}
       </div>
     );
+  }
+  _handleClick(){
+    this.setState({
+      showComments: !this.state.showComments
+    });
+
   }
   _getComment() {
     const commentList = [
